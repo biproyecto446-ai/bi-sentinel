@@ -1,0 +1,200 @@
+<h1 class="text-3xl font-bold text-gray-800 mb-1">
+    Comparación de ejecuciones
+</h1>
+
+<p class="text-gray-500 mb-6">
+    Ejecución <b>#{{a.id}}</b> vs <b>#{{b.id}}</b>
+</p>
+
+{{#if error}}
+<div class="p-4 bg-red-100 border border-red-300 text-red-700 rounded-lg font-semibold">
+    {{error}}
+</div>
+{{else}}
+
+<a href="/refresh_cron"
+   class="inline-flex items-center mb-8 px-4 py-2 bg-gray-200 hover:bg-gray-300
+          text-gray-700 font-semibold rounded-lg transition">
+    ← Regresar al historial
+</a>
+
+<!-- ================= RESUMEN EJECUTIVO ================= -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-10">
+
+    <div class="bg-white rounded-xl p-5 shadow border">
+        <p class="text-sm text-gray-500 mb-1">Tiempo total</p>
+        <p class="text-2xl font-bold text-indigo-700">
+            {{a.json.total_time_seconds}} s
+            <span class="text-sm text-gray-400 font-medium">
+                vs {{b.json.total_time_seconds}} s
+            </span>
+        </p>
+    </div>
+
+    <div class="bg-white rounded-xl p-5 shadow border">
+        <p class="text-sm text-gray-500 mb-1">Vistas refrescadas</p>
+        <p class="text-2xl font-bold text-gray-800">
+            {{a.json.total_views}}
+            <span class="text-sm text-gray-400 font-medium">
+                vs {{b.json.total_views}}
+            </span>
+        </p>
+    </div>
+
+    <div class="bg-white rounded-xl p-5 shadow border">
+        <p class="text-sm text-gray-500 mb-1">Resultado</p>
+
+        {{#if (lt a.json.total_time_seconds b.json.total_time_seconds)}}
+            <p class="text-lg font-bold text-green-600">
+                ✔ Ejecución A fue más rápida
+            </p>
+        {{else if (gt a.json.total_time_seconds b.json.total_time_seconds)}}
+            <p class="text-lg font-bold text-red-600">
+                ✖ Ejecución B fue más rápida
+            </p>
+        {{else}}
+            <p class="text-lg font-bold text-gray-600">
+                ⏱ Tiempos iguales
+            </p>
+        {{/if}}
+    </div>
+
+</div>
+
+<!-- ================= TARJETAS A / B ================= -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
+
+    <!-- EJECUCIÓN A -->
+    <div class="bg-white rounded-2xl p-6 shadow border">
+        <h2 class="text-lg font-bold text-indigo-700 mb-3">
+            Ejecución A · #{{a.id}}
+        </h2>
+
+        <p class="mb-2">
+            Estado:
+            <span class="font-bold
+                {{#if (eq a.json.status "SUCCESS")}}text-green-600{{else}}text-red-600{{/if}}">
+                {{a.json.status}}
+            </span>
+        </p>
+
+        <p class="text-sm text-gray-600">
+            ⏱ Tiempo total:
+            <span class="font-semibold text-gray-900">
+                {{a.json.total_time_seconds}} s
+            </span>
+        </p>
+
+        <p class="text-sm text-gray-600">
+            📊 Total vistas:
+            <span class="font-semibold text-gray-900">
+                {{a.json.total_views}}
+            </span>
+        </p>
+    </div>
+
+    <!-- EJECUCIÓN B -->
+    <div class="bg-white rounded-2xl p-6 shadow border">
+        <h2 class="text-lg font-bold text-indigo-700 mb-3">
+            Ejecución B · #{{b.id}}
+        </h2>
+
+        <p class="mb-2">
+            Estado:
+            <span class="font-bold
+                {{#if (eq b.json.status "SUCCESS")}}text-green-600{{else}}text-red-600{{/if}}">
+                {{b.json.status}}
+            </span>
+        </p>
+
+        <p class="text-sm text-gray-600">
+            ⏱ Tiempo total:
+            <span class="font-semibold text-gray-900">
+                {{b.json.total_time_seconds}} s
+            </span>
+        </p>
+
+        <p class="text-sm text-gray-600">
+            📊 Total vistas:
+            <span class="font-semibold text-gray-900">
+                {{b.json.total_views}}
+            </span>
+        </p>
+    </div>
+
+</div>
+
+<!-- ================= TABLA COMPARATIVA ================= -->
+<h2 class="text-2xl font-semibold mb-4 text-gray-800">
+    Comparación vista por vista
+</h2>
+
+<div class="overflow-hidden rounded-2xl shadow border bg-white">
+
+    <table class="min-w-full text-sm">
+        <thead>
+            <tr class="bg-gray-100 border-b text-gray-700 uppercase text-[11px] tracking-wide">
+
+                <th class="px-5 py-3 text-left font-semibold">Vista</th>
+                <th class="px-5 py-3 text-left font-semibold">
+                    Tiempo A (s)
+                </th>
+                <th class="px-5 py-3 text-left font-semibold">
+                    Tiempo B (s)
+                </th>
+                <th class="px-5 py-3 text-left font-semibold">
+                    Filas A
+                </th>
+                <th class="px-5 py-3 text-left font-semibold">
+                    Filas B
+                </th>
+                <th class="px-5 py-3 text-left font-semibold">
+                    Diferencia filas
+                </th>
+            </tr>
+        </thead>
+
+        <tbody class="divide-y divide-gray-200">
+
+            {{#each compareViews}}
+            <tr class="hover:bg-gray-50 transition">
+
+                <td class="px-5 py-3 font-medium text-gray-800">
+                    {{view}}
+                </td>
+
+                <td class="px-5 py-3 text-gray-700">
+                    {{a_duration}}
+                </td>
+
+                <td class="px-5 py-3 text-gray-700">
+                    {{b_duration}}
+                </td>
+
+                <td class="px-5 py-3 text-gray-700">
+                    {{a_rows}}
+                </td>
+
+                <td class="px-5 py-3 text-gray-700">
+                    {{b_rows}}
+                </td>
+
+                <td class="px-5 py-3 font-semibold">
+                    {{#if (gt diff_rows 0)}}
+                        <span class="text-green-600">+{{diff_rows}}</span>
+                    {{else if (lt diff_rows 0)}}
+                        <span class="text-red-600">{{diff_rows}}</span>
+                    {{else}}
+                        <span class="text-gray-500">0</span>
+                    {{/if}}
+                </td>
+
+            </tr>
+            {{/each}}
+
+        </tbody>
+    </table>
+
+</div>
+
+{{/if}}

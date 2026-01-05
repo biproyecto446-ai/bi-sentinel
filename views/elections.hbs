@@ -1,0 +1,50 @@
+<div class="container mx-auto px-6 py-6">
+
+    <h1 class="text-3xl font-bold mb-6 text-gray-800">{{titulo}}</h1>
+
+    {{#if error}}
+    <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded-md mb-6">
+        <p class="font-semibold">{{error}}</p>
+    </div>
+    {{else}}
+
+
+
+    <div class="shadow-lg rounded-xl border border-gray-200 overflow-x-auto">
+        <table class="min-w-full bg-white text-left">
+            <thead class="bg-gray-50 border-b">
+                <tr class="text-gray-600 uppercase text-xs tracking-wide">
+                    {{#each headers}}
+                    <th class="px-4 py-3 whitespace-nowrap">{{this}}</th>
+                    {{/each}}
+                </tr>
+            </thead>
+
+            <tbody class="divide-y divide-gray-200 text-sm">
+                {{#each elections}}
+                <tr class="hover:bg-gray-50 transition">
+                    {{#each ../headers}}
+                    <td class="px-4 py-3 whitespace-nowrap">
+                        {{lookup ../this this}}
+                    </td>
+
+
+
+                    {{/each}}
+                    <!-- Nueva columna con el botón -->
+                    <td class="px-4 py-3">
+                        <a href="/export_divipole?id={{ID_Eleccion}}&desc={{Des_Eleccion}}"
+                            class="px-2 py-1 bg-green-600 hover:bg-green-700 text-white rounded-lg font-semibold text-sm transition">
+                            Descargar Divipole
+                        </a>
+                    </td>
+
+                </tr>
+                {{/each}}
+            </tbody>
+        </table>
+
+    </div>
+
+    {{/if}}
+</div>

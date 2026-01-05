@@ -1,0 +1,165 @@
+<div class="container mx-auto px-4 md:px-8 py-8 max-w-7xl">
+
+  <!-- Header Principal -->
+  <div class="mb-10">
+    <div class="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6">
+
+      <!-- Título y Badge -->
+      <div class="space-y-3 w-full">
+        <div class="flex items-center gap-3">
+          <div class="w-1.5 h-10 bg-gradient-to-b from-blue-600 to-indigo-600 rounded-full"></div>
+          <h1 class="text-4xl font-extrabold text-gray-900 tracking-tight">
+            Board Origin
+          </h1>
+        </div>
+        <div
+          class="w-full flex items-center gap-2 text-sm text-red-100 bg-red-600 rounded-full px-4 py-2.5 w-fit shadow-lg shadow-red-600/40">
+          <span class="relative flex h-2 w-2">
+            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-300 opacity-75"></span>
+            <span class="relative inline-flex rounded-full h-2 w-2 bg-red-100"></span>
+          </span>
+          <span class="font-bold">Datos en VIVO — Base de datos de PRODUCCIÓN</span>
+        </div>
+      </div>
+
+
+      <!-- Panel de Selección -->
+      <div
+        class="w-full bg-white/80 backdrop-blur-sm rounded-2xl border border-gray-200/60 shadow-lg shadow-gray-200/40 p-5">
+        <div class="flex flex-col sm:flex-row items-stretch sm:items-end gap-4">
+
+          <!-- Select Elección -->
+          <div class="flex-1 min-w-[280px]">
+            <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
+              Elección
+            </label>
+            <div class="flex items-center gap-2">
+              <select id="selectEleccion"
+                class="w-full rounded-xl bg-white  py-3 text-sm focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 focus:outline-none transition-all">
+                <option value="">Seleccione una elección</option>
+                {{#each elections}}
+                <option value="{{this.ID_Eleccion}}">{{this.Des_Eleccion}}</option>
+                {{/each}}
+              </select>
+              <!-- Botón Obtener Información -->
+              <button id="btnObtenerInfo"
+                class="px-6 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold text-sm rounded-xl shadow-lg shadow-blue-500/25 hover:shadow-blue-500/40 transition-all duration-200 flex items-center justify-center gap-2 whitespace-nowrap">
+                <i class="fa-solid fa-bolt"></i>
+                Consultar
+              </button>
+            </div>
+            <p class="mt-2 text-xs text-gray-400 flex items-center gap-1.5">
+              <i class="fa-solid fa-fingerprint text-gray-300"></i>
+              ID: 
+              <span id="eleccionId" 
+                class="font-mono font-medium text-gray-600 cursor-pointer hover:text-blue-600 hover:bg-blue-50 px-1.5 py-0.5 rounded transition-all"
+                title="Click para copiar">-</span>
+              <i id="copyIcon" class="fa-solid fa-copy text-gray-300 hover:text-blue-500 cursor-pointer transition-colors"></i>
+            </p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Separador -->
+  <div class="h-px bg-gradient-to-r from-transparent via-gray-200 to-transparent mb-10"></div>
+
+  <!-- KPI Cards -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+
+    <!-- Testigos Mesa -->
+    <div
+      class="group relative bg-white rounded-2xl border border-gray-100 shadow-md shadow-gray-200/50 hover:shadow-xl hover:shadow-blue-100/50 transition-all duration-300 overflow-hidden">
+      <div
+        class="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-indigo-500/5 opacity-0 group-hover:opacity-100 transition-opacity">
+      </div>
+      <div class="relative p-6">
+        <div class="flex items-center justify-between mb-4">
+          <span class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Testigos de Mesa</span>
+          <div class="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center">
+            <i class="fa-solid fa-users text-blue-600"></i>
+          </div>
+        </div>
+        <p id="countTestigosMesa" class="text-4xl font-black text-gray-900 tracking-tight">-</p>
+        <p class="mt-2 text-xs text-gray-400">Total registrados</p>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+<!-- Tom Select JS -->
+<script src="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/js/tom-select.complete.min.js"></script>
+<script>
+  const eleccionIdSpan = document.getElementById('eleccionId');
+  const btnObtenerInfo = document.getElementById('btnObtenerInfo');
+
+  // Inicializar Tom Select con buscador
+  const selectEleccion = new TomSelect('#selectEleccion', {
+    placeholder: 'Seleccione una elección',
+    allowEmptyOption: false,
+    onChange: function (value) {
+      eleccionIdSpan.textContent = value || '-';
+    }
+  });
+
+  // Función para copiar al portapapeles
+  const copyToClipboard = async () => {
+    const id = eleccionIdSpan.textContent;
+    if (id === '-') return;
+
+    try {
+      await navigator.clipboard.writeText(id);
+      
+      // Feedback visual
+      const originalText = eleccionIdSpan.textContent;
+      eleccionIdSpan.textContent = '¡Copiado!';
+      eleccionIdSpan.classList.add('text-green-600', 'bg-green-50');
+      
+      setTimeout(() => {
+        eleccionIdSpan.textContent = originalText;
+        eleccionIdSpan.classList.remove('text-green-600', 'bg-green-50');
+      }, 1000);
+    } catch (err) {
+      console.error('Error al copiar:', err);
+    }
+  };
+
+  // Event listeners para copiar
+  eleccionIdSpan.addEventListener('click', copyToClipboard);
+  document.getElementById('copyIcon').addEventListener('click', copyToClipboard);
+
+  // Evento del botón Obtener Información
+  btnObtenerInfo.addEventListener('click', async function () {
+    const idEleccion = selectEleccion.getValue();
+
+    if (!idEleccion) {
+      alert('Por favor seleccione una elección');
+      return;
+    }
+
+    // Mostrar loading
+    btnObtenerInfo.disabled = true;
+    btnObtenerInfo.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Cargando...';
+
+    try {
+      const response = await fetch(`/api/board-origin/${idEleccion}`);
+      const result = await response.json();
+
+      if (result.success) {
+        document.getElementById('countTestigosMesa').textContent = result.data.testigosMesa.toLocaleString('es-CO');
+      } else {
+        alert('Error al obtener información');
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      alert('Error de conexión');
+    } finally {
+      btnObtenerInfo.disabled = false;
+      btnObtenerInfo.innerHTML = '<i class="fa-solid fa-bolt"></i> Consultar';
+    }
+  });
+</script>
