@@ -29,3 +29,29 @@ export const getInfoEleccion = async (req, res) => {
     res.status(500).json({ success: false, error: "Error al obtener información" });
   }
 };
+
+export const getCardData = async (req, res) => {
+  try {
+    const { id, cardName } = req.params;
+
+    switch (cardName) {
+      case "testigos-mesa": {
+        const count = await service.getCountTestigosMesa(id);
+        return res.json({ success: true, data: { count } });
+      }
+      case "credenciales": {
+        const count = await service.getCountCredenciales(id);
+        return res.json({ success: true, data: { count } });
+      }
+      case "resolutions": {
+        const count = await service.getCountResolutions(id);
+        return res.json({ success: true, data: { count } });
+      }
+      default:
+        return res.status(400).json({ success: false, error: "Unknown card" });
+    }
+  } catch (e) {
+    console.error("❌ Error en getCardData:", e);
+    res.status(500).json({ success: false, error: "Error al obtener información" });
+  }
+};

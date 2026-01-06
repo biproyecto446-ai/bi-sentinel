@@ -73,7 +73,7 @@ prodWitnessPool.on("error", (err) => {
 /* ============================================================
    PROD – DOCUMENTS
    ============================================================ */
-export const prodUsersPool = new Pool({
+export const prodDocumentsPool = new Pool({
   host: process.env.PROD_DB_HOST,
   port: Number(process.env.PROD_DB_PORT),
   user: process.env.PROD_DB_USER,
@@ -84,10 +84,10 @@ export const prodUsersPool = new Pool({
   connectionTimeoutMillis: 2000,
 });
 
-prodUsersPool.on("connect", () => {
-  console.log("🔥 Conectado a PROD – USERS");
+prodDocumentsPool.on("connect", () => {
+  console.log("🔥 Conectado a PROD – DOCUMENTS");
 });
 
-prodUsersPool.on("error", (err) => {
-  console.error("❌ PROD USERS pool error:", err);
+prodDocumentsPool.on("error", (err) => {
+  console.error("❌ PROD DOCUMENTS pool error:", err);
 });
