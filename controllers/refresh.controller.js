@@ -2,10 +2,28 @@ import * as service from "../services/refresh.service.js";
 
 export const getRefreshCron = async (req, res) => {
   try {
-    const data = await service.getRefreshCron(req.query.page, req.query.limit);
+    // Extraer todos los filtros de la query string
+    const filters = {
+      page: req.query.page,
+      limit: req.query.limit,
+      status: req.query.status,
+      dateFrom: req.query.dateFrom,
+      dateTo: req.query.dateTo,
+      minDuration: req.query.minDuration,
+      maxDuration: req.query.maxDuration,
+      executionId: req.query.executionId,
+      sortBy: req.query.sortBy,
+      sortOrder: req.query.sortOrder
+    };
+
+    const data = await service.getRefreshCron(filters);
     res.render("refresh_cron", data);
   } catch (e) {
-    res.render("refresh_cron", { error: "Error cargando refresh cron" });
+    console.error("Error en getRefreshCron:", e);
+    res.render("refresh_cron", { 
+      error: "Error cargando refresh cron",
+      titulo: "Refresh Cron"
+    });
   }
 };
 
@@ -43,4 +61,3 @@ export const compare = async (req, res) => {
     });
   }
 };
-

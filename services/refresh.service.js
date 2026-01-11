@@ -1,36 +1,127 @@
 import { biPool } from "../config/db.js";
 
-export const getRefreshCron = async (page, limit) => {
-  try { // res
-    page = parseInt(page) || 1;
-    limit = parseInt(limit) || 10;
+/**
+ * Obtiene las ejecuciones del cron con filtros y paginación
+ */
+export const getRefreshCron = async (filters = {}) => {
+  try {
+    // Parámetros de paginación
+    const page = parseInt(filters.page) || 1;
+    const limit = parseInt(filters.limit) || 10;
     const offset = (page - 1) * limit;
 
-    // 1️⃣ Total de registros
-    const countResult = await biPool.query(`
-            SELECT COUNT(*) FROM public.audit_cron_teel_witnessv2will
-        `);
+    // Construir cláusulas WHERE dinámicamente
+    const whereClauses = [];
+    const values = [];
+    let paramIndex = 1;
+
+    // Filtro por status
+    if (filters.status) {
+      whereClauses.push(`status = $${paramIndex}`);
+      values.push(filters.status);
+      paramIndex++;
+    }
+
+    // Filtro por fecha desde
+    if (filters.dateFrom) {
+      whereClauses.push(`start_time >= $${paramIndex}`);
+      values.push(filters.dateFrom);
+      paramIndex++;
+    }
+
+    // Filtro por fecha hasta
+    if (filters.dateTo) {
+      whereClauses.push(`start_time <= ($${paramIndex}::date + interval '1 day')`);
+      values.push(filters.dateTo);
+      paramIndex++;
+    }
+
+    // Filtro por duración mínima (en segundos)
+    if (filters.minDuration) {
+      whereClauses.push(`EXTRACT(EPOCH FROM (end_time - start_time)) >= $${paramIndex}`);
+      values.push(parseInt(filters.minDuration));
+      paramIndex++;
+    }
+
+    // Filtro por duración máxima (en segundos)
+    if (filters.maxDuration) {
+      whereClauses.push(`EXTRACT(EPOCH FROM (end_time - start_time)) <= $${paramIndex}`);
+      values.push(parseInt(filters.maxDuration));
+      paramIndex++;
+    }
+
+    // Filtro por ID específico
+    if (filters.executionId) {
+      whereClauses.push(`id = $${paramIndex}`);
+      values.push(parseInt(filters.executionId));
+      paramIndex++;
+    }
+
+    // Construir WHERE clause
+    const whereSQL = whereClauses.length > 0 
+      ? `WHERE ${whereClauses.join(' AND ')}` 
+      : '';
+
+    // Ordenamiento
+    const validSortColumns = ['id', 'start_time', 'end_time', 'status'];
+    const sortBy = validSortColumns.includes(filters.sortBy) ? filters.sortBy : 'id';
+    const sortOrder = filters.sortOrder === 'ASC' ? 'ASC' : 'DESC';
+
+    // Caso especial: ordenar por duración
+    let orderBySQL;
+    if (filters.sortBy === 'duration') {
+      orderBySQL = `ORDER BY EXTRACT(EPOCH FROM (end_time - start_time)) ${sortOrder}`;
+    } else {
+      orderBySQL = `ORDER BY ${sortBy} ${sortOrder}`;
+    }
+
+    // 1️⃣ Total de registros con filtros
+    const countQuery = `
+      SELECT COUNT(*) 
+      FROM public.audit_cron_teel_witnessv2will
+      ${whereSQL}
+    `;
+    const countResult = await biPool.query(countQuery, values);
     const totalRecords = parseInt(countResult.rows[0].count);
+    const totalPages = Math.ceil(totalRecords / limit) || 1;
 
-    const totalPages = Math.ceil(totalRecords / limit);
-    const dataResult = await biPool.query(`
-            SELECT *
-            FROM public.audit_cron_teel_witnessv2will
-            ORDER BY id DESC
-            LIMIT $1 OFFSET $2
-        `, [limit, offset]);
+    // 2️⃣ Datos con filtros, ordenamiento y paginación
+    const dataQuery = `
+      SELECT *
+      FROM public.audit_cron_teel_witnessv2will
+      ${whereSQL}
+      ${orderBySQL}
+      LIMIT $${paramIndex} OFFSET $${paramIndex + 1}
+    `;
+    const dataResult = await biPool.query(dataQuery, [...values, limit, offset]);
 
-    const job_detail = await biPool.query(`
-            SELECT * FROM cron.job_run_details
-            ORDER BY runid DESC LIMIT 10
-        `);
-
-    console.log(job_detail);
+    // Determinar si hay filtros activos
+    const hasActiveFilters = !!(
+      filters.status || 
+      filters.dateFrom || 
+      filters.dateTo || 
+      filters.minDuration || 
+      filters.maxDuration || 
+      filters.executionId ||
+      (filters.sortBy && filters.sortBy !== 'id') ||
+      (filters.sortOrder && filters.sortOrder !== 'DESC')
+    );
 
     return {
       titulo: "Refresh Cron",
       testigos: dataResult.rows,
-      job_detail: job_detail[0],
+      total: totalRecords,
+      filters: {
+        status: filters.status || '',
+        dateFrom: filters.dateFrom || '',
+        dateTo: filters.dateTo || '',
+        minDuration: filters.minDuration || '',
+        maxDuration: filters.maxDuration || '',
+        executionId: filters.executionId || '',
+        sortBy: filters.sortBy || 'id',
+        sortOrder: filters.sortOrder || 'DESC'
+      },
+      hasActiveFilters,
       pagination: {
         page,
         limit,
@@ -44,15 +135,14 @@ export const getRefreshCron = async (page, limit) => {
     };
 
   } catch (error) {
-    console.error("Error en DB:", error);
-    res.render("refresh_cron", {
-      titulo: "Refresh Cron",
-      error: "Error get refresh Cron"
-    });
+    console.error("Error en getRefreshCron:", error);
+    throw error;
   }
-
 };
 
+/**
+ * Obtiene el detalle de una ejecución por ID
+ */
 export const getDetalleById = async (id) => {
   const result = await biPool.query(
     `SELECT * FROM public.audit_cron_teel_witnessv2will WHERE id=$1`,
@@ -68,6 +158,9 @@ export const getDetalleById = async (id) => {
   };
 };
 
+/**
+ * Compara dos ejecuciones por sus IDs
+ */
 export const compareByIds = async (id1, id2) => {
   const parseRow = (row) => {
     try {
@@ -121,4 +214,3 @@ export const compareByIds = async (id1, id2) => {
     compareViews
   };
 };
-

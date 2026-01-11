@@ -39,6 +39,10 @@ export const getCardData = async (req, res) => {
         const count = await service.getCountTestigosMesa(id);
         return res.json({ success: true, data: { count } });
       }
+      case "testigos-comision": {
+        const count = await service.getCountsTestigoComision(id);
+        return res.json({ success: true, data: { count } });
+      }
       case "credenciales": {
         const count = await service.getCountCredenciales(id);
         return res.json({ success: true, data: { count } });

@@ -1,0 +1,18 @@
+<form action="/compare" method="GET" class="p-4 border-b bg-gray-50">
+    <h3 class="text-lg font-bold mb-1">Comparar por ID</h3>
+    <p class="text-sm text-gray-500 mb-4">
+        Usa este formulario si ya conoces los IDs exactos
+    </p>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <input type="number" name="id1" placeholder="Ejecución A" required
+            class="px-3 py-2 border rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
+
+        <input type="number" name="id2" placeholder="Ejecución B" required
+            class="px-3 py-2 border rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
+    </div>
+
+    <button type="submit" class="mt-4 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition">
+        Comparar ejecuciones
+    </button>
+</form>

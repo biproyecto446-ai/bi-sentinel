@@ -1,339 +1,40 @@
-<h1 class="text-3xl font-bold mb-6 text-gray-800 tracking-tight">
-    {{titulo}}
-</h1>
+{{!-- Header con título y mensaje de error --}}
+{{> refresh-cron/header titulo=titulo error=error}}
 
-{{#if error}}
-<div class="p-4 mb-6 bg-red-100 text-red-700 border border-red-300 rounded-lg">
-    <p class="font-semibold">{{error}}</p>
-</div>
-{{else}}
+{{#unless error}}
 
 <p class="text-gray-700 mb-4">
     {{total}} ejecuciones registradas
 </p>
 
+{{!-- Card de filtros --}}
+{{> refresh-cron/filters filters=filters pagination=pagination hasActiveFilters=hasActiveFilters}}
+
 <div class="overflow-hidden rounded-xl shadow-lg border border-gray-200 bg-white">
 
-    <!-- FORMULARIO MANUAL -->
-    <form action="/compare" method="GET" class="p-4 border-b bg-gray-50">
-        <h3 class="text-lg font-bold mb-1">Comparar por ID</h3>
-        <p class="text-sm text-gray-500 mb-4">
-            Usa este formulario si ya conoces los IDs exactos
-        </p>
+    {{!-- Formulario para comparar por IDs --}}
+    {{> refresh-cron/compare-form}}
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <input type="number" name="id1" placeholder="Ejecución A" required
-                class="px-3 py-2 border rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
+    {{!-- Controles de selección de tabla --}}
+    {{> refresh-cron/table-controls}}
 
-            <input type="number" name="id2" placeholder="Ejecución B" required
-                class="px-3 py-2 border rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
-        </div>
+    {{!-- Tabla de ejecuciones --}}
+    {{> refresh-cron/table testigos=testigos}}
 
-        <button type="submit" class="mt-4 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition">
-            Comparar ejecuciones
-        </button>
-    </form>
+    {{!-- Paginación --}}
+    {{> refresh-cron/pagination pagination=pagination testigos=testigos}}
 
-    <!-- HEADER TABLA / CONTROLES -->
-    <div class="flex items-center justify-between px-4 py-3 border-b bg-white">
-        <div class="text-sm text-gray-600">
-            <span id="selectionInfo">Selecciona 2 ejecuciones</span>
-            <span class="ml-3 text-xs text-gray-500">
-                A: <strong id="selA">–</strong> ·
-                B: <strong id="selB">–</strong>
-            </span>
-        </div>
-
-        <button type="button" id="compareBtn" disabled class="px-3 py-2 bg-indigo-600 text-white rounded-lg text-sm font-semibold
-                   opacity-50 cursor-not-allowed transition">
-            Comparar seleccionados
-        </button>
-    </div>
-
-    <!-- TABLA -->
-    <table class="min-w-full">
-        <thead class="bg-gray-50 text-xs uppercase text-gray-600 border-b">
-            <tr>
-                <th class="px-3 py-2"></th>
-                <th class="px-4 py-2 text-left">Ejecución</th>
-                <th class="px-4 py-2 text-left">Inicio</th>
-                <th class="px-4 py-2 text-left">Fin</th>
-                <th class="px-4 py-2 text-left">Estado</th>
-                <th class="px-4 py-2"></th>
-            </tr>
-        </thead>
-
-        <tbody id="tableBody" class="divide-y">
-            {{#each testigos}}
-            <tr class="hover:bg-gray-50 transition">
-                <td class="px-3 py-2">
-                    <input type="checkbox" value="{{id}}" class="compare-check">
-                </td>
-
-                <td class="px-4 py-2 font-medium">#{{id}}</td>
-
-                <td class="px-4 py-2 text-sm text-gray-600" data-date="{{start_time}}"></td>
-
-                <td class="px-4 py-2 text-sm text-gray-600" data-date="{{end_time}}"></td>
-
-                <td class="px-4 py-2">
-                    {{status}} /
-
-                    {{#if (eq status "SUCCESS")}}
-                    <span class="px-3 py-1 text-xs bg-green-100 text-green-700 rounded-full">
-                        ✔ OK
-                    </span>
-                    {{else if (eq status "EN_PROCESO")}}
-                    <span class="px-3 py-1 text-xs bg-blue-100 text-blue-700 rounded-full">
-                        ⏳ En proceso
-                    </span>
-                    {{else if (eq status "PARTIAL_ERROR")}}
-                    <span class="px-3 py-1 text-xs bg-red-100 text-red-700 rounded-full">
-                        ✖ Error
-                    </span>
-                    {{else}}
-                    <span class="px-3 py-1 text-xs bg-red-100 text-red-600 rounded-full">
-                        ⚠ {{status}}
-                    </span>
-                    {{/if}}
-                </td>
-
-
-                <td class="px-4 py-2">
-                    <a href="/detalle/{{id}}"
-                        class="text-xs px-3 py-1 bg-blue-100 text-blue-700 rounded-full hover:bg-blue-200">
-                        Ver detalle
-                    </a>
-                </td>
-            </tr>
-            {{/each}}
-        </tbody>
-    </table>
-    {{#if pagination}}
-    <div class="mt-8 px-4 py-4 bg-white border rounded-xl shadow-sm">
-
-        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
-
-            <!-- INFO -->
-            <div class="text-sm text-gray-600">
-                Mostrando
-                <b>
-                    {{add (multiply (subtract pagination.page 1) pagination.limit) 1}}
-                    –
-                    {{add (multiply (subtract pagination.page 1) pagination.limit) testigos.length}}
-                </b>
-                de
-                <b>{{pagination.totalRecords}}</b>
-                ejecuciones
-            </div>
-
-            <!-- CONTROLES -->
-            <div class="flex flex-wrap items-center gap-1">
-
-                {{#if pagination.hasPrev}}
-                <a href="/refresh_cron?page=1"
-                    class="px-3 py-2 rounded-lg bg-gray-200 hover:bg-gray-300 text-sm font-semibold">
-                    « Primera
-                </a>
-                {{else}}
-                <span class="px-3 py-2 rounded-lg bg-gray-100 text-gray-400 text-sm">
-                    « Primera
-                </span>
-                {{/if}}
-
-                {{#if pagination.hasPrev}}
-                <a href="/refresh_cron?page={{pagination.prevPage}}"
-                    class="px-3 py-2 rounded-lg bg-gray-200 hover:bg-gray-300 text-sm font-semibold">
-                    ‹ Anterior
-                </a>
-                {{else}}
-                <span class="px-3 py-2 rounded-lg bg-gray-100 text-gray-400 text-sm">
-                    ‹ Anterior
-                </span>
-                {{/if}}
-
-                <span class="px-4 py-2 rounded-lg bg-indigo-600 text-white text-sm font-bold">
-                    {{pagination.page}}
-                </span>
-
-                {{#if pagination.hasNext}}
-                <a href="/refresh_cron?page={{pagination.nextPage}}"
-                    class="px-3 py-2 rounded-lg bg-gray-200 hover:bg-gray-300 text-sm font-semibold">
-                    Siguiente ›
-                </a>
-                {{else}}
-                <span class="px-3 py-2 rounded-lg bg-gray-100 text-gray-400 text-sm">
-                    Siguiente ›
-                </span>
-                {{/if}}
-
-                {{#if pagination.hasNext}}
-                <a href="/refresh_cron?page={{pagination.totalPages}}"
-                    class="px-3 py-2 rounded-lg bg-gray-200 hover:bg-gray-300 text-sm font-semibold">
-                    Última »
-                </a>
-                {{else}}
-                <span class="px-3 py-2 rounded-lg bg-gray-100 text-gray-400 text-sm">
-                    Última »
-                </span>
-                {{/if}}
-
-            </div>
-        </div>
-    </div>
-    {{/if}}
-
-
-
-    <!-- RESUMEN GRÁFICO -->
-    <div class="mb-6 bg-white border rounded-xl shadow p-4 mt-7">
-        <h3 class="text-lg font-bold mb-2">Duración de ejecuciones</h3>
-        <canvas id="durationChart" height="100"></canvas>
-    </div>
-
-    <canvas id="durationChart" height="50"></canvas>
-    <canvas id="statusChart" height="50"></canvas>
-
-
-
+    {{!-- Gráficos --}}
+    {{> refresh-cron/charts}}
 
 </div>
 
+{{!-- Scripts modulares --}}
 <script src="/js/refresh-cron.js"></script>
+<script src="/js/refresh-cron/date-formatter.js"></script>
+<script src="/js/refresh-cron/compare-selector.js"></script>
+<script src="/js/refresh-cron/duration-chart.js"></script>
+<script src="/js/refresh-cron/status-chart.js"></script>
+<script src="/js/refresh-cron/trend-chart.js"></script>
 
-<!-- SCRIPT ÚNICO -->
-<script>
-    document.addEventListener("DOMContentLoaded", () => {
-
-        const checks = document.querySelectorAll(".compare-check");
-        const compareBtn = document.getElementById("compareBtn");
-        const info = document.getElementById("selectionInfo");
-        const selA = document.getElementById("selA");
-        const selB = document.getElementById("selB");
-
-        let selectedOrder = [];
-
-        /* Render fechas (1 sola pasada) */
-        document.querySelectorAll("[data-date]").forEach(td => {
-            td.textContent = new Date(td.dataset.date).toLocaleString("es-CO", {
-                timeZone: "America/Bogota",
-                day: "2-digit",
-                month: "long",
-                year: "numeric",
-                hour: "2-digit",
-                minute: "2-digit",
-                hour12: true
-            });
-        });
-
-        checks.forEach(chk => {
-            chk.addEventListener("change", () => {
-
-                if (chk.checked) {
-                    if (selectedOrder.length >= 2) {
-                        chk.checked = false;
-                        return;
-                    }
-                    selectedOrder.push(chk.value);
-                } else {
-                    selectedOrder = selectedOrder.filter(id => id !== chk.value);
-                }
-
-                updateUI();
-            });
-        });
-
-        function updateUI() {
-            info.textContent = `${selectedOrder.length} / 2 seleccionadas`;
-            selA.textContent = selectedOrder[0] ?? "–";
-            selB.textContent = selectedOrder[1] ?? "–";
-
-            const enabled = selectedOrder.length === 2;
-            compareBtn.disabled = !enabled;
-            compareBtn.classList.toggle("opacity-50", !enabled);
-            compareBtn.classList.toggle("cursor-not-allowed", !enabled);
-        }
-
-        compareBtn.addEventListener("click", () => {
-            if (selectedOrder.length !== 2) return;
-
-            const [id1, id2] = selectedOrder;
-            window.location.href = `/compare?id1=${id1}&id2=${id2}`;
-        });
-
-    });
-</script>
-
-
-<script>
-    document.addEventListener("DOMContentLoaded", () => {
-
-        /* ============================
-           EXTRAER DATOS DE LA TABLA
-           ============================ */
-
-        const rows = document.querySelectorAll("#tableBody tr");
-
-        const labels = [];
-        const durations = [];
-
-        rows.forEach(row => {
-            const id = row.querySelector("td:nth-child(2)")?.innerText.replace("#", "");
-            const start = row.querySelector("td:nth-child(3)")?.dataset.date;
-            const end = row.querySelector("td:nth-child(4)")?.dataset.date;
-
-            if (!id || !start || !end) return;
-
-            const startDate = new Date(start);
-            const endDate = new Date(end);
-
-            const seconds = Math.round((endDate - startDate) / 1000);
-
-            labels.push(id);
-            durations.push(seconds);
-        });
-
-        /* ============================
-           CREAR GRÁFICA
-           ============================ */
-
-        const ctx = document.getElementById("durationChart");
-        if (!ctx) return;
-
-        new Chart(ctx, {
-            type: "bar",
-            data: {
-                labels: labels.reverse(), // más antiguo → más reciente
-                datasets: [{
-                    label: "Duración (segundos)",
-                    data: durations.reverse(),
-                    backgroundColor: "#6366f1",
-                    borderRadius: 6
-                }]
-            },
-            options: {
-                responsive: true,
-                plugins: {
-                    legend: { display: false },
-                    tooltip: {
-                        callbacks: {
-                            label: ctx => `${ctx.raw} s`
-                        }
-                    }
-                },
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        ticks: {
-                            callback: v => `${v}s`
-                        }
-                    }
-                }
-            }
-        });
-
-    });
-</script>
-
-
-{{/if}}
+{{/unless}}

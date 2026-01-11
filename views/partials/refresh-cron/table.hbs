@@ -1,0 +1,39 @@
+<table class="min-w-full">
+    <thead class="bg-gray-50 text-xs uppercase text-gray-600 border-b">
+        <tr>
+            <th class="px-3 py-2"></th>
+            <th class="px-4 py-2 text-left">Ejecución</th>
+            <th class="px-4 py-2 text-left">Inicio</th>
+            <th class="px-4 py-2 text-left">Fin</th>
+            <th class="px-4 py-2 text-left">Estado</th>
+            <th class="px-4 py-2"></th>
+        </tr>
+    </thead>
+
+    <tbody id="tableBody" class="divide-y">
+        {{#each testigos}}
+        <tr class="hover:bg-gray-50 transition">
+            <td class="px-3 py-2">
+                <input type="checkbox" value="{{id}}" class="compare-check">
+            </td>
+
+            <td class="px-4 py-2 font-medium">#{{id}}</td>
+
+            <td class="px-4 py-2 text-sm text-gray-600" data-date="{{start_time}}"></td>
+
+            <td class="px-4 py-2 text-sm text-gray-600" data-date="{{end_time}}"></td>
+
+            <td class="px-4 py-2">
+                {{> refresh-cron/status-badge status=status}}
+            </td>
+
+            <td class="px-4 py-2">
+                <a href="/detalle/{{id}}"
+                    class="text-xs px-3 py-1 bg-blue-100 text-blue-700 rounded-full hover:bg-blue-200">
+                    Ver detalle
+                </a>
+            </td>
+        </tr>
+        {{/each}}
+    </tbody>
+</table>

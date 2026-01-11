@@ -1,0 +1,159 @@
+<!-- Header Premium -->
+<header class="sticky top-0 z-50">
+    <!-- Barra superior decorativa -->
+    <div class="h-1 bg-gradient-to-r from-violet-600 via-indigo-500 to-cyan-400"></div>
+    
+    <!-- Navbar principal -->
+    <nav class="bg-slate-900/95 backdrop-blur-xl border-b border-slate-800/50 shadow-xl shadow-slate-900/20">
+        <div class="container mx-auto px-6">
+            <div class="flex items-center justify-between h-16">
+                
+                <!-- Brand / Logo -->
+                <a href="/" class="group flex items-center gap-3">
+                    <!-- Logo Icon -->
+                    <div class="relative">
+                        <div class="absolute inset-0 bg-gradient-to-br from-violet-500 to-indigo-600 rounded-xl blur-lg opacity-50 group-hover:opacity-75 transition-opacity"></div>
+                        <div class="relative w-10 h-10 bg-gradient-to-br from-violet-500 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg">
+                            <i class="fa-solid fa-bolt text-white text-lg"></i>
+                        </div>
+                    </div>
+                    <!-- Logo Text -->
+                    <div class="flex flex-col">
+                        <span class="text-lg font-bold text-white tracking-tight">
+                            PowerBI <span class="text-transparent bg-clip-text bg-gradient-to-r from-violet-400 to-cyan-400">Ops</span>
+                        </span>
+                        <span class="text-[10px] text-slate-500 font-medium tracking-wider uppercase">Data Operations</span>
+                    </div>
+                </a>
+
+                <!-- Menu Desktop -->
+                <ul class="hidden md:flex items-center gap-1">
+                    <li>
+                        <a href="/refresh_cron" class="nav-link group relative flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800/50 transition-all duration-200">
+                            <div class="w-8 h-8 rounded-lg bg-slate-800 group-hover:bg-gradient-to-br group-hover:from-emerald-500 group-hover:to-teal-600 flex items-center justify-center transition-all duration-200">
+                                <i class="fa-solid fa-arrows-rotate text-emerald-400 group-hover:text-white text-sm"></i>
+                            </div>
+                            <span>Refresh Cron</span>
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="/jobs" class="nav-link group relative flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800/50 transition-all duration-200">
+                            <div class="w-8 h-8 rounded-lg bg-slate-800 group-hover:bg-gradient-to-br group-hover:from-amber-500 group-hover:to-orange-600 flex items-center justify-center transition-all duration-200">
+                                <i class="fa-solid fa-clock text-amber-400 group-hover:text-white text-sm"></i>
+                            </div>
+                            <span>Cron Jobs</span>
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="/board-origin" class="nav-link group relative flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800/50 transition-all duration-200">
+                            <div class="w-8 h-8 rounded-lg bg-slate-800 group-hover:bg-gradient-to-br group-hover:from-violet-500 group-hover:to-purple-600 flex items-center justify-center transition-all duration-200">
+                                <i class="fa-solid fa-chart-pie text-violet-400 group-hover:text-white text-sm"></i>
+                            </div>
+                            <span>Board Origin</span>
+                        </a>
+                    </li>
+                </ul>
+
+                <!-- Right side: Status + Mobile button -->
+                <div class="flex items-center gap-4">
+                    <!-- Status Badge -->
+                    <div class="hidden sm:flex items-center gap-2 px-3 py-1.5 bg-emerald-500/10 border border-emerald-500/20 rounded-full">
+                        <span class="relative flex h-2 w-2">
+                            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                            <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                        </span>
+                        <span class="text-xs font-medium text-emerald-400">Sistema Activo</span>
+                    </div>
+
+                    <!-- Mobile Menu Button -->
+                    <button id="menuBtn" class="md:hidden relative w-10 h-10 flex items-center justify-center rounded-lg bg-slate-800 hover:bg-slate-700 transition-colors">
+                        <i class="fa-solid fa-bars text-slate-300" id="menuIcon"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Menu -->
+        <div id="mobileMenu" class="md:hidden hidden border-t border-slate-800">
+            <div class="container mx-auto px-4 py-4">
+                <ul class="flex flex-col gap-2">
+                    <li>
+                        <a href="/refresh_cron" class="flex items-center gap-3 px-4 py-3 rounded-xl bg-slate-800/50 hover:bg-slate-800 text-slate-300 hover:text-white transition-all">
+                            <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center">
+                                <i class="fa-solid fa-arrows-rotate text-white"></i>
+                            </div>
+                            <div>
+                                <div class="font-medium">Refresh Cron</div>
+                                <div class="text-xs text-slate-500">Monitoreo de ejecuciones</div>
+                            </div>
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="/jobs" class="flex items-center gap-3 px-4 py-3 rounded-xl bg-slate-800/50 hover:bg-slate-800 text-slate-300 hover:text-white transition-all">
+                            <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center">
+                                <i class="fa-solid fa-clock text-white"></i>
+                            </div>
+                            <div>
+                                <div class="font-medium">Cron Jobs</div>
+                                <div class="text-xs text-slate-500">Gestión de trabajos programados</div>
+                            </div>
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="/board-origin" class="flex items-center gap-3 px-4 py-3 rounded-xl bg-slate-800/50 hover:bg-slate-800 text-slate-300 hover:text-white transition-all">
+                            <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center">
+                                <i class="fa-solid fa-chart-pie text-white"></i>
+                            </div>
+                            <div>
+                                <div class="font-medium">Board Origin</div>
+                                <div class="text-xs text-slate-500">Dashboard de datos en vivo</div>
+                            </div>
+                        </a>
+                    </li>
+                </ul>
+
+                <!-- Mobile Status -->
+                <div class="mt-4 pt-4 border-t border-slate-800">
+                    <div class="flex items-center justify-center gap-2 px-4 py-2 bg-emerald-500/10 border border-emerald-500/20 rounded-xl">
+                        <span class="relative flex h-2 w-2">
+                            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                            <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                        </span>
+                        <span class="text-sm font-medium text-emerald-400">Sistema Activo</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+</header>
+
+<script>
+    (() => {
+        const menuBtn = document.getElementById("menuBtn");
+        const mobileMenu = document.getElementById("mobileMenu");
+        const menuIcon = document.getElementById("menuIcon");
+
+        menuBtn.addEventListener("click", () => {
+            mobileMenu.classList.toggle("hidden");
+            
+            // Toggle icon
+            if (mobileMenu.classList.contains("hidden")) {
+                menuIcon.className = "fa-solid fa-bars text-slate-300";
+            } else {
+                menuIcon.className = "fa-solid fa-xmark text-slate-300";
+            }
+        });
+
+        // Marcar link activo
+        const currentPath = window.location.pathname;
+        document.querySelectorAll('.nav-link, #mobileMenu a').forEach(link => {
+            if (link.getAttribute('href') === currentPath) {
+                link.classList.add('bg-slate-800/80', 'text-white');
+            }
+        });
+    })();
+</script>

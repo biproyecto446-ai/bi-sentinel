@@ -1,5 +1,5 @@
 (() => {
-  const selector = '[data-component="CardTestigosMesa"]';
+  const selector = '[data-component="CardTestigosComision"]';
 
   function isInViewport(el) {
     const rect = el.getBoundingClientRect();
@@ -9,22 +9,30 @@
   document.querySelectorAll(selector).forEach(el => {
     const cardId = el.dataset.cardId;
     const countEl = el.querySelector(`#count-${cardId}`);
-    const countPrincipalesEl = el.querySelector(`#count-testigos-principales-${cardId}`);
-    const countRemanentesEl = el.querySelector(`#count-testigos-remanentes-${cardId}`);
+    const countAuxiliarEl = el.querySelector(`#count-testigos-comision-auxiliar-${cardId}`);
+    const countZonalEl = el.querySelector(`#count-testigos-comision-zonal-${cardId}`);
+    const countMunicipalEl = el.querySelector(`#count-testigos-comision-municipal-${cardId}`);
+    const countGeneralEl = el.querySelector(`#count-testigos-comision-general-${cardId}`);
+    const countCneEl = el.querySelector(`#count-testigos-comision-cne-${cardId}`);
     let currentEleccion = null;
     let lastFetchedEleccion = null;
 
     const fetchData = async (eleccionId) => {
       if (!eleccionId) return;
       try {
-        const res = await fetch(`/api/board-origin/${eleccionId}/card/testigos-mesa`);
+        const res = await fetch(`/api/board-origin/${eleccionId}/card/testigos-comision`);
         const json = await res.json();
+
+        console.log(json, 'testigos comision');
         
         if (json.success) {
-          const { total, principales, remanentes } = json.data.count;
+          const { total, auxiliar, zonal, municipal, general, cne } = json.data.count;
           countEl.textContent = total.toLocaleString('es-CO');
-          countPrincipalesEl.textContent = principales.toLocaleString('es-CO');
-          countRemanentesEl.textContent = remanentes.toLocaleString('es-CO');
+          countAuxiliarEl.textContent = auxiliar.toLocaleString('es-CO');
+          countZonalEl.textContent = zonal.toLocaleString('es-CO');
+          countMunicipalEl.textContent = municipal.toLocaleString('es-CO');
+          countGeneralEl.textContent = general.toLocaleString('es-CO');
+          countCneEl.textContent = cne.toLocaleString('es-CO');
         } else {
           console.error('Error fetching card data', json);
         }

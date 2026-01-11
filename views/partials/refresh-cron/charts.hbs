@@ -1,0 +1,107 @@
+<!-- SECCIÓN DE GRÁFICOS -->
+
+<!-- Tarjetas de Estados (en vez de gráfico de dona) -->
+<div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-7">
+    <div class="bg-gradient-to-br from-emerald-50 to-emerald-100 border border-emerald-200 rounded-xl p-4 status-card" data-status="SUCCESS">
+        <div class="flex items-center justify-between mb-2">
+            <span class="text-xs font-semibold text-emerald-600 uppercase tracking-wide">Exitosos</span>
+            <div class="w-8 h-8 rounded-lg bg-emerald-500 flex items-center justify-center">
+                <i class="fa-solid fa-check text-white text-sm"></i>
+            </div>
+        </div>
+        <p class="text-3xl font-black text-emerald-700 status-count">0</p>
+        <div class="mt-2 h-1.5 bg-emerald-200 rounded-full overflow-hidden">
+            <div class="h-full bg-emerald-500 rounded-full status-bar" style="width: 0%"></div>
+        </div>
+        <p class="text-xs text-emerald-600 mt-1 status-percent">0%</p>
+    </div>
+
+    <div class="bg-gradient-to-br from-blue-50 to-blue-100 border border-blue-200 rounded-xl p-4 status-card" data-status="EN_PROCESO">
+        <div class="flex items-center justify-between mb-2">
+            <span class="text-xs font-semibold text-blue-600 uppercase tracking-wide">En Proceso</span>
+            <div class="w-8 h-8 rounded-lg bg-blue-500 flex items-center justify-center">
+                <i class="fa-solid fa-spinner text-white text-sm"></i>
+            </div>
+        </div>
+        <p class="text-3xl font-black text-blue-700 status-count">0</p>
+        <div class="mt-2 h-1.5 bg-blue-200 rounded-full overflow-hidden">
+            <div class="h-full bg-blue-500 rounded-full status-bar" style="width: 0%"></div>
+        </div>
+        <p class="text-xs text-blue-600 mt-1 status-percent">0%</p>
+    </div>
+
+    <div class="bg-gradient-to-br from-amber-50 to-amber-100 border border-amber-200 rounded-xl p-4 status-card" data-status="PARTIAL_ERROR">
+        <div class="flex items-center justify-between mb-2">
+            <span class="text-xs font-semibold text-amber-600 uppercase tracking-wide">Error Parcial</span>
+            <div class="w-8 h-8 rounded-lg bg-amber-500 flex items-center justify-center">
+                <i class="fa-solid fa-triangle-exclamation text-white text-sm"></i>
+            </div>
+        </div>
+        <p class="text-3xl font-black text-amber-700 status-count">0</p>
+        <div class="mt-2 h-1.5 bg-amber-200 rounded-full overflow-hidden">
+            <div class="h-full bg-amber-500 rounded-full status-bar" style="width: 0%"></div>
+        </div>
+        <p class="text-xs text-amber-600 mt-1 status-percent">0%</p>
+    </div>
+
+    <div class="bg-gradient-to-br from-red-50 to-red-100 border border-red-200 rounded-xl p-4 status-card" data-status="ERROR">
+        <div class="flex items-center justify-between mb-2">
+            <span class="text-xs font-semibold text-red-600 uppercase tracking-wide">Error</span>
+            <div class="w-8 h-8 rounded-lg bg-red-500 flex items-center justify-center">
+                <i class="fa-solid fa-xmark text-white text-sm"></i>
+            </div>
+        </div>
+        <p class="text-3xl font-black text-red-700 status-count">0</p>
+        <div class="mt-2 h-1.5 bg-red-200 rounded-full overflow-hidden">
+            <div class="h-full bg-red-500 rounded-full status-bar" style="width: 0%"></div>
+        </div>
+        <p class="text-xs text-red-600 mt-1 status-percent">0%</p>
+    </div>
+</div>
+
+<!-- Gráficos principales -->
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
+
+    <!-- Gráfico de Duración -->
+    <div class="bg-white border rounded-xl shadow p-5">
+        <div class="flex items-center gap-3 mb-4">
+            <div class="w-10 h-10 rounded-lg bg-indigo-100 flex items-center justify-center">
+                <i class="fa-solid fa-clock text-indigo-600"></i>
+            </div>
+            <div>
+                <h3 class="text-lg font-bold text-gray-800">Duración de Ejecuciones</h3>
+                <p class="text-xs text-gray-500">Tiempo en segundos por ejecución</p>
+            </div>
+        </div>
+        <canvas id="durationChart" height="140"></canvas>
+    </div>
+
+    <!-- Gráfico de Barras Horizontal de Estados -->
+    <div class="bg-white border rounded-xl shadow p-5">
+        <div class="flex items-center gap-3 mb-4">
+            <div class="w-10 h-10 rounded-lg bg-violet-100 flex items-center justify-center">
+                <i class="fa-solid fa-chart-bar text-violet-600"></i>
+            </div>
+            <div>
+                <h3 class="text-lg font-bold text-gray-800">Comparativa de Estados</h3>
+                <p class="text-xs text-gray-500">Barras horizontales por estado</p>
+            </div>
+        </div>
+        <canvas id="statusBarChart" height="140"></canvas>
+    </div>
+
+</div>
+
+<!-- Gráfico de Tendencia (ancho completo) -->
+<div class="bg-white border rounded-xl shadow p-5 mt-6">
+    <div class="flex items-center gap-3 mb-4">
+        <div class="w-10 h-10 rounded-lg bg-amber-100 flex items-center justify-center">
+            <i class="fa-solid fa-chart-line text-amber-600"></i>
+        </div>
+        <div>
+            <h3 class="text-lg font-bold text-gray-800">Tendencia de Rendimiento</h3>
+            <p class="text-xs text-gray-500">Evolución del tiempo de ejecución</p>
+        </div>
+    </div>
+    <canvas id="trendChart" height="80"></canvas>
+</div>

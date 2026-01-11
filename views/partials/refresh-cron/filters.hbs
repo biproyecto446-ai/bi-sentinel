@@ -1,0 +1,195 @@
+<!-- CARD DE FILTROS -->
+<div class="bg-white border border-gray-200 rounded-xl shadow-sm mb-6">
+    <!-- Header -->
+    <div class="flex items-center justify-between px-5 py-4 border-b border-gray-100">
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-lg bg-indigo-100 flex items-center justify-center">
+                <i class="fa-solid fa-filter text-indigo-600"></i>
+            </div>
+            <div>
+                <h3 class="text-lg font-bold text-gray-800">Filtros</h3>
+                <p class="text-xs text-gray-500">Filtra las ejecuciones por diferentes criterios</p>
+            </div>
+        </div>
+        <button type="button" id="toggleFilters" class="text-gray-400 hover:text-gray-600 transition">
+            <i class="fa-solid fa-chevron-down" id="filterChevron"></i>
+        </button>
+    </div>
+
+    <!-- Body de filtros (colapsable) -->
+    <form id="filtersForm" action="/refresh_cron" method="GET" class="p-5">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+
+            <!-- Filtro por Estado -->
+            <div>
+                <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">
+                    Estado
+                </label>
+                <select name="status" id="filterStatus"
+                    class="w-full px-3 py-2.5 text-sm border border-gray-300 rounded-lg bg-white focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 focus:outline-none">
+                    <option value="">Todos los estados</option>
+                    <option value="SUCCESS" {{#if (eq filters.status "SUCCESS")}}selected{{/if}}>✔ Exitoso</option>
+                    <option value="EN_PROCESO" {{#if (eq filters.status "EN_PROCESO")}}selected{{/if}}>⏳ En Proceso</option>
+                    <option value="PARTIAL_ERROR" {{#if (eq filters.status "PARTIAL_ERROR")}}selected{{/if}}>⚠ Error Parcial</option>
+                    <option value="ERROR" {{#if (eq filters.status "ERROR")}}selected{{/if}}>✖ Error</option>
+                </select>
+            </div>
+
+            <!-- Filtro Fecha Desde -->
+            <div>
+                <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">
+                    Fecha Desde
+                </label>
+                <input type="date" name="dateFrom" id="filterDateFrom" value="{{filters.dateFrom}}"
+                    class="w-full px-3 py-2.5 text-sm border border-gray-300 rounded-lg bg-white focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 focus:outline-none">
+            </div>
+
+            <!-- Filtro Fecha Hasta -->
+            <div>
+                <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">
+                    Fecha Hasta
+                </label>
+                <input type="date" name="dateTo" id="filterDateTo" value="{{filters.dateTo}}"
+                    class="w-full px-3 py-2.5 text-sm border border-gray-300 rounded-lg bg-white focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 focus:outline-none">
+            </div>
+
+            <!-- Filtro Duración Mínima -->
+            <div>
+                <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">
+                    Duración Mínima (seg)
+                </label>
+                <input type="number" name="minDuration" id="filterMinDuration" value="{{filters.minDuration}}" 
+                    placeholder="Ej: 60" min="0"
+                    class="w-full px-3 py-2.5 text-sm border border-gray-300 rounded-lg bg-white focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 focus:outline-none">
+            </div>
+
+        </div>
+
+        <!-- Segunda fila de filtros -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mt-4">
+
+            <!-- Filtro Duración Máxima -->
+            <div>
+                <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">
+                    Duración Máxima (seg)
+                </label>
+                <input type="number" name="maxDuration" id="filterMaxDuration" value="{{filters.maxDuration}}" 
+                    placeholder="Ej: 300" min="0"
+                    class="w-full px-3 py-2.5 text-sm border border-gray-300 rounded-lg bg-white focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 focus:outline-none">
+            </div>
+
+            <!-- Filtro por ID -->
+            <div>
+                <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">
+                    ID de Ejecución
+                </label>
+                <input type="number" name="executionId" id="filterExecutionId" value="{{filters.executionId}}" 
+                    placeholder="Ej: 123" min="1"
+                    class="w-full px-3 py-2.5 text-sm border border-gray-300 rounded-lg bg-white focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 focus:outline-none">
+            </div>
+
+            <!-- Ordenar por -->
+            <div>
+                <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">
+                    Ordenar Por
+                </label>
+                <select name="sortBy" id="filterSortBy"
+                    class="w-full px-3 py-2.5 text-sm border border-gray-300 rounded-lg bg-white focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 focus:outline-none">
+                    <option value="id" {{#if (eq filters.sortBy "id")}}selected{{/if}}>ID (más reciente)</option>
+                    <option value="start_time" {{#if (eq filters.sortBy "start_time")}}selected{{/if}}>Fecha de inicio</option>
+                    <option value="duration" {{#if (eq filters.sortBy "duration")}}selected{{/if}}>Duración</option>
+                    <option value="status" {{#if (eq filters.sortBy "status")}}selected{{/if}}>Estado</option>
+                </select>
+            </div>
+
+            <!-- Orden -->
+            <div>
+                <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">
+                    Orden
+                </label>
+                <select name="sortOrder" id="filterSortOrder"
+                    class="w-full px-3 py-2.5 text-sm border border-gray-300 rounded-lg bg-white focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 focus:outline-none">
+                    <option value="DESC" {{#if (eq filters.sortOrder "DESC")}}selected{{/if}}>Descendente ↓</option>
+                    <option value="ASC" {{#if (eq filters.sortOrder "ASC")}}selected{{/if}}>Ascendente ↑</option>
+                </select>
+            </div>
+
+        </div>
+
+        <!-- Filtros rápidos de fecha -->
+        <div class="flex flex-wrap items-center gap-2 mt-4 pt-4 border-t border-gray-100">
+            <span class="text-xs font-semibold text-gray-500 uppercase tracking-wide">Rápido:</span>
+            <button type="button" onclick="setQuickDate(0)" 
+                class="px-3 py-1.5 text-xs bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition">
+                Hoy
+            </button>
+            <button type="button" onclick="setQuickDate(7)" 
+                class="px-3 py-1.5 text-xs bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition">
+                Últimos 7 días
+            </button>
+            <button type="button" onclick="setQuickDate(30)" 
+                class="px-3 py-1.5 text-xs bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition">
+                Últimos 30 días
+            </button>
+            <button type="button" onclick="setQuickDate(90)" 
+                class="px-3 py-1.5 text-xs bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition">
+                Últimos 90 días
+            </button>
+        </div>
+
+        <!-- Mantener el limit actual -->
+        <input type="hidden" name="limit" value="{{pagination.limit}}">
+
+        <!-- Botones de acción -->
+        <div class="flex flex-wrap items-center gap-3 mt-5 pt-4 border-t border-gray-100">
+            <button type="submit"
+                class="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold rounded-lg shadow-sm transition flex items-center gap-2">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                Aplicar Filtros
+            </button>
+
+            <a href="/refresh_cron"
+                class="px-5 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm font-semibold rounded-lg transition flex items-center gap-2">
+                <i class="fa-solid fa-rotate-left"></i>
+                Limpiar Filtros
+            </a>
+
+            <!-- Indicador de filtros activos -->
+            {{#if hasActiveFilters}}
+            <div class="flex items-center gap-2 ml-auto">
+                <span class="px-3 py-1.5 bg-amber-100 text-amber-700 text-xs font-semibold rounded-full flex items-center gap-1">
+                    <i class="fa-solid fa-filter"></i>
+                    Filtros activos
+                </span>
+            </div>
+            {{/if}}
+        </div>
+    </form>
+</div>
+
+<script>
+    // Toggle para mostrar/ocultar filtros
+    const toggleBtn = document.getElementById('toggleFilters');
+    const filtersForm = document.getElementById('filtersForm');
+    const chevron = document.getElementById('filterChevron');
+
+    if (toggleBtn && filtersForm) {
+        toggleBtn.addEventListener('click', () => {
+            filtersForm.classList.toggle('hidden');
+            chevron.classList.toggle('rotate-180');
+        });
+    }
+
+    // Función para establecer fechas rápidas
+    function setQuickDate(days) {
+        const filterDateFrom = document.getElementById('filterDateFrom');
+        const filterDateTo = document.getElementById('filterDateTo');
+        
+        const today = new Date();
+        const fromDate = new Date();
+        fromDate.setDate(today.getDate() - days);
+        
+        filterDateFrom.value = fromDate.toISOString().split('T')[0];
+        filterDateTo.value = today.toISOString().split('T')[0];
+    }
+</script>
